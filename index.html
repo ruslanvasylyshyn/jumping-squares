@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jumping squares</title>
+    <style type="text/css">
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        background-color: #f0f0f0;
+        flex-wrap: wrap;
+      }
+
+      body > div {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- JavaScript will generate 100 div elements here -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const body = document.querySelector("body");
+        const allDivs = [];
+        const movedDivs = [];
+
+        // Create 100 div elements with unique text
+        for (let i = 1; i <= 100; i++) {
+          const div = document.createElement("div");
+          div.textContent = `div ${i}`;
+          allDivs.push(div);
+          body.appendChild(div);
+        }
+
+        // Add click event listener to each div
+        allDivs.forEach((div) => {
+          div.addEventListener("click", () => {
+            if (!movedDivs.includes(div)) {
+              // Move the div to  movedDivs
+              movedDivs.push(div);
+              body.prepend(div);
+
+              // Remove the div from allDivs
+              const index = allDivs.indexOf(div);
+              console.log(index);
+              if (index !== -1) {
+                allDivs.splice(index, 1);
+              }
+            } else {
+              allDivs.push(div); // Add to the allDivs array
+              movedDivs.splice(movedDivs.indexOf(div), 1); // Remove from movedDivs array
+              body.appendChild(div);
+
+              // Clear body for create new divs based on movedDivs and allDivs
+              body.innerHTML = "";
+
+              // Sort allDivs based on the numeric value in the div text
+              allDivs.sort((a, b) => {
+                const numA = parseInt(a.textContent.match(/\d+/)[0]);
+                const numB = parseInt(b.textContent.match(/\d+/)[0]);
+                return numA - numB;
+              });
+
+              // Append divs back to the body
+              movedDivs.forEach((sortedDiv) => {
+                body.appendChild(sortedDiv);
+              });
+              allDivs.forEach((sortedDiv) => {
+                body.appendChild(sortedDiv);
+              });
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
