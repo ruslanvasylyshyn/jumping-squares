@@ -33,53 +33,47 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const body = document.querySelector("body");
-        const allDivs = [];
-        const movedDivs = [];
+        const divs = [];
 
         // Create 100 div elements with unique text
         for (let i = 1; i <= 100; i++) {
           const div = document.createElement("div");
           div.textContent = `div ${i}`;
-          allDivs.push(div);
+          divs.push(div);
           body.appendChild(div);
         }
 
         // Add click event listener to each div
-        allDivs.forEach((div) => {
+        divs.forEach((div) => {
+          let clicked = 0;
           div.addEventListener("click", () => {
-            if (!movedDivs.includes(div)) {
-              // Move the div to  movedDivs
-              movedDivs.push(div);
+            if (clicked === 0) {
+              // First click, move the div to the beginning
               body.prepend(div);
+              divs.unshift(div);
 
-              // Remove the div from allDivs
-              const index = allDivs.indexOf(div);
-              console.log(index);
-              if (index !== -1) {
-                allDivs.splice(index, 1);
+              const currentIndex = divs.indexOf(div);
+              if (currentIndex !== -1) {
+                divs.splice(currentIndex, 1);
               }
+
+              clicked = 1;
             } else {
-              allDivs.push(div); // Add to the allDivs array
-              movedDivs.splice(movedDivs.indexOf(div), 1); // Remove from movedDivs array
-              body.appendChild(div);
+              // Second click, move the div to its corresponding position
+              const divNumber = parseInt(div.textContent.match(/\d+/)[0]);
+              const targetDiv = document.querySelectorAll("div")[divNumber];
 
-              // Clear body for create new divs based on movedDivs and allDivs
-              body.innerHTML = "";
+              if (targetDiv) {
+                divs.splice(divNumber, 0, div);
+                body.insertBefore(div, targetDiv);
+              }
 
-              // Sort allDivs based on the numeric value in the div text
-              allDivs.sort((a, b) => {
-                const numA = parseInt(a.textContent.match(/\d+/)[0]);
-                const numB = parseInt(b.textContent.match(/\d+/)[0]);
-                return numA - numB;
-              });
+              const currentIndex = divs.indexOf(div);
+              if (currentIndex !== -1) {
+                divs.splice(currentIndex + 1, 1);
+              }
 
-              // Append divs back to the body
-              movedDivs.forEach((sortedDiv) => {
-                body.appendChild(sortedDiv);
-              });
-              allDivs.forEach((sortedDiv) => {
-                body.appendChild(sortedDiv);
-              });
+              clicked = 0;
             }
           });
         });
